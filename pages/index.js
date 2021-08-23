@@ -1,9 +1,34 @@
+import Link from 'next/link';
 import Layout from '@/components/Layout';
+import EventItem from '@/components/EventItem';
+import { API_URL } from '@/config/index';
 
-export default function HomePage() {
+export default function HomePage({ events }) {
   return (
     <Layout>
-      <h1>Home</h1>
+      <h1>Concerts à venir</h1>
+      {events.length === 0 && <h3>Pas de concerts pour l'instant</h3>}
+      {events.map((evt) => (
+        <EventItem key={evt.id} evt={evt} />
+      ))}
+
+      {events.length > 0 && (
+        <Link href='/events'>
+          <a className='btn-secondary'>Voir tous les concerts</a>
+        </Link>
+      )}
     </Layout>
   );
+}
+
+export async function getStaticProps() {
+  const res = await fetch(`${API_URL}/api/events`);
+  const events = await res.json();
+
+  return {
+    props: {
+      events: events.slice(0, 3),
+    },
+    revalidate: 1,
+  };
 }

@@ -1,23 +1,32 @@
+import moment from 'moment';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { FaImage } from 'react-icons/fa';
 
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
+import Image from 'next/image';
 import Layout from '@/components/Layout';
+import Modal from '@/components/Modal';
 import { API_URL } from '@/config/index';
 import styles from '@/styles/Form.module.css';
 
-export default function AddEventPage() {
+export default function EditEventPage({ evt }) {
   const [values, setValues] = useState({
-    name: '',
-    performers: '',
-    venue: '',
-    address: '',
-    date: '',
-    time: '',
-    description: '',
+    name: evt.name,
+    performers: evt.performers,
+    venue: evt.venue,
+    address: evt.address,
+    date: evt.date,
+    time: evt.time,
+    description: evt.description,
   });
+  const [imagePreview, setImagePreview] = useState(
+    evt.image ? evt.image.formats.thumbnail.url : null
+  );
+
+  const [showModal, setShowModal] = useState(false);
 
   const router = useRouter();
 
@@ -31,8 +40,8 @@ export default function AddEventPage() {
       toast.error('Merci de remplir tous les champs');
     }
 
-    const res = await fetch(`${API_URL}/events`, {
-      method: 'POST',
+    const res = await fetch(`${API_URL}/events/${evt.id}`, {
+      method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
       },
@@ -53,9 +62,9 @@ export default function AddEventPage() {
   };
 
   return (
-    <Layout title='Ajouter un événement'>
+    <Layout title='Modifier un événement'>
       <Link href='/events'>Retour</Link>
-      <h1>Ajouter événement</h1>
+      <h1>Modifier événement</h1>
 
       <ToastContainer />
 
@@ -107,7 +116,7 @@ export default function AddEventPage() {
               type='date'
               name='date'
               id='date'
-              value={values.date}
+              value={moment(values.date).format('yyyy-MM-DD')}
               onChange={handleInputChange}
             />
           </div>
@@ -134,8 +143,41 @@ export default function AddEventPage() {
           ></textarea>
         </div>
 
-        <input type='submit' value='Ajouter Concert' className='btn' />
+        <input type='submit' value='Mettre à jour Concert' className='btn' />
       </form>
+
+      <h2>Image</h2>
+      {imagePreview ? (
+        <Image src={imagePreview} height={100} width={170} />
+      ) : (
+        <div>
+          <p>Pas d'image chargée</p>
+        </div>
+      )}
+
+      <div>
+        <button
+          onClick={() => setShowModal(true)}
+          className='btn-secondary btn-icon'
+        >
+          <FaImage /> Choisir une image
+        </button>
+      </div>
+      <Modal show={showModal} onClose={() => setShowModal(false)}>
+        IMAGE UPLOAD
+      </Modal>
     </Layout>
   );
+}
+
+export async function getServerSideProps({ params: { id } }) {
+  // id is in the file name [id].js , it's also the url
+  const res = await fetch(`${API_URL}/events/${id}`);
+  const evt = await res.json();
+
+  return {
+    props: {
+      evt,
+    },
+  };
 }

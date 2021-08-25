@@ -1,6 +1,6 @@
 import { createContext, useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { API_URL } from '@/config/index';
+import { NEXT_URL } from '@/config/index';
 
 const AuthContext = createContext();
 
@@ -16,7 +16,28 @@ export const AuthProvider = ({ children }) => {
   // Login user
   const login = async ({ email: identifier, password }) => {
     // rename for "identifier" for Strapi needs
-    console.log({ identifier, password });
+    const res = await fetch(`${NEXT_URL}/api/login`, {
+      // goes to api/login.js
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        identifier,
+        password,
+      }),
+    });
+
+    const data = await res.json();
+
+    console.log(data);
+
+    if (res.ok) {
+      setUser(data.user); // back from api/login.js
+    } else {
+      setError(data.message); // back from api/login.js
+      setError(null);
+    }
   };
 
   // Logout user

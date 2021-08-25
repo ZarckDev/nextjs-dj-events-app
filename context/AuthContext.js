@@ -16,7 +16,27 @@ export const AuthProvider = ({ children }) => {
 
   // Register User
   const register = async (user) => {
-    console.log(user);
+    // rename for "identifier" for Strapi needs
+    const res = await fetch(`${NEXT_URL}/api/register`, {
+      // goes to api/login.js
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(user),
+    });
+
+    const data = await res.json();
+
+    console.log(data);
+
+    if (res.ok) {
+      setUser(data.user); // back from api/login.js
+      router.push('/account/dashboard'); // redirect to dashboard
+    } else {
+      setError(data.message); // back from api/login.js
+      setError(null);
+    }
   };
 
   // Login user

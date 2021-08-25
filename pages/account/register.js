@@ -23,8 +23,11 @@ export default function RegisterPage() {
     if (password !== passwordConfirm) {
       toast.error('Les mots de passe ne correspondent pas');
     }
-    register({ username, email, password }); // register() from AuthContext
+    register({ username, email, password }); // register() from AuthContext, give the user object
   };
+
+  // handle the error
+  useEffect(() => error && toast.error(error));
 
   return (
     <Layout title="S'enregistrer">
@@ -70,7 +73,7 @@ export default function RegisterPage() {
               onChange={(e) => setPasswordConfirm(e.target.value)}
             />
           </div>
-          <input type='submit' value='Se connecter' className='btn' />
+          <input type='submit' value="S'enregistrer" className='btn' />
         </form>
 
         <p>

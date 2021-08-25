@@ -2,7 +2,6 @@ import moment from 'moment';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { FaImage } from 'react-icons/fa';
-
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
@@ -12,8 +11,9 @@ import Modal from '@/components/Modal';
 import ImageUpload from '@/components/ImageUpload';
 import { API_URL } from '@/config/index';
 import styles from '@/styles/Form.module.css';
+import { parseCookies } from '@/helpers/index';
 
-export default function EditEventPage({ evt }) {
+export default function EditEventPage({ evt, token }) {
   const [values, setValues] = useState({
     name: evt.name,
     performers: evt.performers,
@@ -45,11 +45,16 @@ export default function EditEventPage({ evt }) {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(values),
     });
 
     if (!res.ok) {
+      if (res.status === 403 || res.status === 401) {
+        toast.error("Vous n'etes pas authorisé");
+        return;
+      }
       toast.error('Une erreur est survenue');
     } else {
       const evt = await res.json();
@@ -172,7 +177,11 @@ export default function EditEventPage({ evt }) {
         </button>
       </div>
       <Modal show={showModal} onClose={() => setShowModal(false)}>
-        <ImageUpload evtId={evt.id} imageUploaded={imageUploaded} />
+        <ImageUpload
+          evtId={evt.id}
+          imageUploaded={imageUploaded}
+          token={token}
+        />
       </Modal>
     </Layout>
   );
@@ -180,15 +189,17 @@ export default function EditEventPage({ evt }) {
 
 export async function getServerSideProps({ params: { id }, req }) {
   // cookie is located in req
+  const { token } = parseCookies(req);
   // id is in the file name [id].js , it's also the url
   const res = await fetch(`${API_URL}/events/${id}`);
   const evt = await res.json();
 
-  console.log(req.headers.cookie);
+  // console.log(req.headers.cookie);
 
   return {
     props: {
       evt,
+      token,
     },
   };
 }

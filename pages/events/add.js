@@ -46,7 +46,7 @@ export default function AddEventPage({ token }) {
         toast.error("Vous n'etes pas authorisé");
         return;
       }
-      toast.error('Un problème est survenu');
+      toast.error('Une erreur est survenu');
     } else {
       const evt = await res.json();
       router.push(`/events/${evt.slug}`);

@@ -1,14 +1,31 @@
 import { parseCookies } from '@/helpers/index';
+import { useRouter } from 'next/router';
 import Layout from '@/components/Layout';
 import DashboardEvent from '@/components/DashboardEvent';
 import { API_URL } from '@/config/index';
 import styles from '@/styles/Dashboard.module.css';
+import user from 'pages/api/user';
 
-export default function DashboardPage({ events }) {
+export default function DashboardPage({ events, token }) {
   // console.log(events);
+  const router = useRouter();
 
-  const deleteEvent = (id) => {
-    console.log(id);
+  const deleteEvent = async (id) => {
+    if (confirm('Are you sure?')) {
+      const res = await fetch(`${API_URL}/events/${id}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = await res.json();
+
+      if (!res.ok) {
+        toast.error(data.message);
+      } else {
+        router.reload(); // stay on dashboard
+      }
+    }
   };
 
   return (
@@ -42,6 +59,7 @@ export async function getServerSideProps({ req }) {
   return {
     props: {
       events,
+      token,
     },
   };
 }

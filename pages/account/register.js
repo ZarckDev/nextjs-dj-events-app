@@ -7,11 +7,15 @@ import Link from 'next/link';
 import Layout from '@/components/Layout';
 import styles from '@/styles/AuthForm.module.css';
 
+import AuthContext from '@/context/AuthContext';
+
 export default function RegisterPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [username, setUsername] = useState('');
   const [passwordConfirm, setPasswordConfirm] = useState('');
+
+  const { register, error } = useContext(AuthContext);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -19,7 +23,7 @@ export default function RegisterPage() {
     if (password !== passwordConfirm) {
       toast.error('Les mots de passe ne correspondent pas');
     }
-    console.log({ username, email, password });
+    register({ username, email, password }); // register() from AuthContext
   };
 
   return (

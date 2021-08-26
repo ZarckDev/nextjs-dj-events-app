@@ -77,7 +77,7 @@ export default function RegisterPage() {
         </form>
 
         <p>
-          Déjà un compte ? <Link href='/account/login'>Se connecter</Link>
+          Déjà un compte ? <Link href='/account/login'>Connexion</Link>
         </p>
       </div>
     </Layout>

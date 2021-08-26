@@ -24,10 +24,10 @@ export default function LoginPage() {
   };
 
   return (
-    <Layout title='Se connecter'>
+    <Layout title='Connexion'>
       <div className={styles.auth}>
         <h1>
-          <FaUser /> Se connecter
+          <FaUser /> Connexion
         </h1>
         <ToastContainer />
         <form onSubmit={handleSubmit}>
@@ -49,7 +49,7 @@ export default function LoginPage() {
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
-          <input type='submit' value='Se connecter' className='btn' />
+          <input type='submit' value='Connexion' className='btn' />
         </form>
 
         <p>

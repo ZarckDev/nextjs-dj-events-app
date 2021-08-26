@@ -43,7 +43,7 @@ export default function Header() {
                   onClick={() => logout()} // logout() coming from Context
                   className='btn-secondary btn-icon'
                 >
-                  <FaSignOutAlt /> Logout
+                  <FaSignOutAlt /> Deconnexion
                 </button>
               </li>
             </>
@@ -53,7 +53,7 @@ export default function Header() {
               <li>
                 <Link href='/account/login'>
                   <a className='btn-secondary btn-icon'>
-                    <FaSignInAlt /> Se connecter
+                    <FaSignInAlt /> Connexion
                   </a>
                 </Link>
               </li>
